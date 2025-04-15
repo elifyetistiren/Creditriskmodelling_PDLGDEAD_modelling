@@ -3,6 +3,9 @@
 
 This comprehensive project simulates the institutional credit risk modelling workflow, aligning with best practices across global banking and investment institutions. It demonstrates an end-to-end analytical pipeline to evaluate institutional counterparties using publicly available regulatory filings (SEC), simulate internal credit scoring models, estimate forward-looking risk parameters (PD, LGD, EAD), and compute expected losses (EL) as required by Basel regulatory standards.
 
+![dashboard](https://github.com/user-attachments/assets/2d914e11-b872-49fe-b2b4-448ff0699883)
+
+
 ----------
 
 ## 📦 Part 1: Data Preparation and Feature Engineering
