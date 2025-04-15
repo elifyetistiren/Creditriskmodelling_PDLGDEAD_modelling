@@ -147,43 +147,32 @@ In this project, we compute a customized Z-Score using the following five financ
 
 1. **Liquidity Signal – Working Capital to Total Assets ($Z_1$)**  
    This ratio gauges a firm's ability to meet short-term obligations with short-term assets:  
-   $$
-   Z_1 = \frac{\mathrm{Current\ Assets} - \mathrm{Current\ Liabilities}}{\mathrm{Total\ Assets}}
-   $$
+   $Z_1 = \frac{\mathrm{Current\ Assets} - \mathrm{Current\ Liabilities}}{\mathrm{Total\ Assets}}$
 
 2. **Profitability Retention – Retained Earnings to Total Assets ($Z_2$)**  
    Indicates the firm’s cumulative profitability over time, acting as a proxy for resilience:  
-   $$
-   Z_2 = \frac{\mathrm{Retained\ Earnings}}{\mathrm{Total\ Assets}}
-   $$
+   $Z_2 = \frac{\mathrm{Retained\ Earnings}}{\mathrm{Total\ Assets}}$
 
 3. **Operating Efficiency – EBIT to Total Assets ($Z_3$)**  
    Captures how effectively the company utilizes its assets to generate operating income:  
-   $$
-   Z_3 = \frac{\mathrm{Operating\ Income}}{\mathrm{Total\ Assets}}
-   $$
+   $Z_3 = \frac{\mathrm{Operating\ Income}}{\mathrm{Total\ Assets}}$
 
 4. **Leverage Buffer – Net Worth to Total Liabilities ($Z_4$)**  
    Represents solvency and the extent of equity cushion available to absorb losses:  
-   $$
-   Z_4 = \frac{\mathrm{Total\ Assets} - \mathrm{Total\ Liabilities}}{\mathrm{Total\ Liabilities}}
-   $$
+   $Z_4 = \frac{\mathrm{Total\ Assets} - \mathrm{Total\ Liabilities}}{\mathrm{Total\ Liabilities}}$
 
 5. **Asset Turnover – Revenue to Total Assets ($Z_5$)**  
    Measures operational efficiency and revenue generation capacity relative to asset base:  
-   $$
-   Z_5 = \frac{\mathrm{Revenue}}{\mathrm{Total\ Assets}}
-   $$
+   $Z_5 = \frac{\mathrm{Revenue}}{\mathrm{Total\ Assets}}$
 
+**Altman Z-Score Composite Calculation**  
 Using the standard Altman weights, the composite score is computed as:  
-$$
-\mathrm{Altman\ Z} = 1.2Z_1 + 1.4Z_2 + 3.3Z_3 + 0.6Z_4 + 1.0Z_5
-$$
+$\mathrm{Altman\ Z} = 1.2Z_1 + 1.4Z_2 + 3.3Z_3 + 0.6Z_4 + 1.0Z_5$
 
-This score helps classify counterparties into financial health zones:
-- **Distress Zone**: \( Z < 1.8 \)
-- **Grey Zone**: $( 1.8 \leq Z \leq 3.0 )$
-- **Safe Zone**: \( Z > 3.0 \)
+**Z-Score Classification Zones**
+- **Distress Zone**: $Z < 1.8$  
+- **Grey Zone**: $1.8 \leq Z \leq 3.0$  
+- **Safe Zone**: $Z > 3.0$
 
 These Z-zones are then integrated into the probability of default (PD) blending framework to modulate weight between structural (Altman-based) and statistical (logistic regression) PD estimates based on financial signal strength.
 
@@ -217,129 +206,14 @@ def zscore_zone(z):
 
 final_df['Z_Zone'] = final_df['Altman_Z'].apply(zscore_zone)
 ```
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+| Counterparty_ID | Counterparty_Name                                      | Revenue     | Debt        | Equity      | Interest_Expense | Current_Assets | Current_Liabilities | Sector                      | Z1       | Z2       | Z3       | Z4       | Z5       |
+|------------------|--------------------------------------------------------|-------------|-------------|-------------|------------------|----------------|----------------------|------------------------------|----------|----------|----------|----------|----------|
+| C001             | FRANKLIN RESOURCES INC                                | 7.39E+07    | 9.1673E+09  | -4.503E+08  | 2.31E+07         | 3.24645E+10    | 1.02427E+10          | Asset Manager               | 0.684495 | 0.367143 | 0.006361 | 2.169526 | 0.002276 |
+| C002             | FEDERAL NATIONAL MORTGAGE ASSOCIATION FANNIE MAE      | 2.43159E+08 | 6.8785E+10  | 7.7682E+10  | 9.0874E+10       | 2.04E+11       | 4.255074E+12         | Credit Agency / Investment Bank | -19.858206 | -0.189338 | 0.000213 | -0.952057 | 0.001192 |
+| C003             | SEI INVESTMENTS CO                                     | 0.00E+00    | 9.97E+08    | 2.131828E+09| 4.46E+08         | 1.69867E+08    | 7.4853E+07           | Broker                      | 0.037704 | 0.302613 | 0.218945 | 4.826677 | 0.000000 |
+| C004             | SCHWAB CHARLES CORP                                    | 4.187E+09   | 9.97E+08    | 2.00E+07    | 7.17E+08         | 1.586E+09      | 2.3041E+10           | Broker                      | -13.527743 | 21.375158 | 0.028723 | -0.931166 | 2.639975 |
+| C005             | RAYMOND JAMES FINANCIAL INC                            | 8.87E+08    | 9.97E+08    | 1.1673E+10  | 4.46E+08         | 2.70E+07       | 7.1325E+10           | Broker                      | -2640.666667 | 440.518519 | 1.687185 | -0.999621 | 32.851852 |
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Counterparty_ID</th>
-      <th>Counterparty_Name</th>
-      <th>Revenue</th>
-      <th>Debt</th>
-      <th>Equity</th>
-      <th>Interest_Expense</th>
-      <th>Current_Assets</th>
-      <th>Current_Liabilities</th>
-      <th>Sector</th>
-      <th>Z1</th>
-      <th>Z2</th>
-      <th>Z3</th>
-      <th>Z4</th>
-      <th>Z5</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>C001</td>
-      <td>FRANKLIN RESOURCES INC</td>
-      <td>7.390000e+07</td>
-      <td>9.167300e+09</td>
-      <td>-4.503000e+08</td>
-      <td>2.310000e+07</td>
-      <td>3.246450e+10</td>
-      <td>1.024270e+10</td>
-      <td>Asset Manager</td>
-      <td>0.684495</td>
-      <td>0.367143</td>
-      <td>0.006361</td>
-      <td>2.169526</td>
-      <td>0.002276</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>C002</td>
-      <td>FEDERAL NATIONAL MORTGAGE ASSOCIATION FANNIE MAE</td>
-      <td>2.431590e+08</td>
-      <td>6.878500e+10</td>
-      <td>7.768200e+10</td>
-      <td>9.087400e+10</td>
-      <td>2.040000e+11</td>
-      <td>4.255074e+12</td>
-      <td>Credit Agency / Investment Bank</td>
-      <td>-19.858206</td>
-      <td>-0.189338</td>
-      <td>0.000213</td>
-      <td>-0.952057</td>
-      <td>0.001192</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>C003</td>
-      <td>SEI INVESTMENTS CO</td>
-      <td>0.000000e+00</td>
-      <td>9.970000e+08</td>
-      <td>2.131828e+09</td>
-      <td>4.460000e+08</td>
-      <td>1.698670e+08</td>
-      <td>7.485300e+07</td>
-      <td>Broker</td>
-      <td>0.037704</td>
-      <td>0.302613</td>
-      <td>0.218945</td>
-      <td>4.826677</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>C004</td>
-      <td>SCHWAB CHARLES CORP</td>
-      <td>4.187000e+09</td>
-      <td>9.970000e+08</td>
-      <td>2.000000e+07</td>
-      <td>7.170000e+08</td>
-      <td>1.586000e+09</td>
-      <td>2.304100e+10</td>
-      <td>Broker</td>
-      <td>-13.527743</td>
-      <td>21.375158</td>
-      <td>0.028723</td>
-      <td>-0.931166</td>
-      <td>2.639975</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>C005</td>
-      <td>RAYMOND JAMES FINANCIAL INC</td>
-      <td>8.870000e+08</td>
-      <td>9.970000e+08</td>
-      <td>1.167300e+10</td>
-      <td>4.460000e+08</td>
-      <td>2.700000e+07</td>
-      <td>7.132500e+10</td>
-      <td>Broker</td>
-      <td>-2640.666667</td>
-      <td>440.518519</td>
-      <td>1.687185</td>
-      <td>-0.999621</td>
-      <td>32.851852</td>
-    </tr>
-  </tbody>
-</table>
-</div>
 
 ----------
 
@@ -355,22 +229,16 @@ Here, we simulate an internal risk engine aligned with practices observed in ban
 Each counterparty is scored across three core dimensions using interpretable, accounting-based ratios:
 
 1. **Capital Adequacy – Debt-to-Equity Ratio**  
-   Indicates financial leverage and buffer capacity. Institutions with higher leverage may face higher funding costs or regulatory constraints.
-   $$
-   \text{Debt-to-Equity} = \frac{\mathrm{Total\ Debt}}{\mathrm{Equity}}
-   $$
+   Indicates financial leverage and buffer capacity. Institutions with higher leverage may face higher funding costs or regulatory constraints.  
+   $\text{Debt-to-Equity} = \frac{\mathrm{Total\ Debt}}{\mathrm{Equity}}$
 
 2. **Debt Servicing Ability – Interest Coverage Ratio**  
-   Measures how comfortably a firm can meet interest obligations from recurring income. Often used by analysts and rating agencies to flag refinancing risk.
-   $$
-   \text{Interest\ Coverage} = \frac{\mathrm{Revenue}}{\mathrm{Interest\ Expense}}
-   $$
+   Measures how comfortably a firm can meet interest obligations from recurring income. Often used by analysts and rating agencies to flag refinancing risk.  
+   $\text{Interest\ Coverage} = \frac{\mathrm{Revenue}}{\mathrm{Interest\ Expense}}$
 
 3. **Liquidity Buffer – Current Ratio**  
-   Evaluates whether the firm can honor short-term liabilities using short-term assets. Especially critical for counterparties exposed to margin calls or redemption risk.
-   $$
-   \text{Current\ Ratio} = \frac{\mathrm{Current\ Assets}}{\mathrm{Current\ Liabilities}}
-   $$
+   Evaluates whether the firm can honor short-term liabilities using short-term assets. Especially critical for counterparties exposed to margin calls or redemption risk.  
+   $\text{Current\ Ratio} = \frac{\mathrm{Current\ Assets}}{\mathrm{Current\ Liabilities}}$
 
 Each ratio is scored based on historical thresholds and industry benchmarks. The sum of the scores determines the final rating band, ranging from high risk (CCC) to investment grade (AAA):
 
@@ -551,137 +419,18 @@ This blended PD framework enables:
 - Forward-looking PDs suitable for limit monitoring, ECL forecasting, or capital modeling
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Counterparty_ID</th>
-      <th>Counterparty_Name</th>
-      <th>Altman_Z</th>
-      <th>Z_Zone</th>
-      <th>Mapped_PD</th>
-      <th>PD_Logistic</th>
-      <th>Final_PD</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>39</th>
-      <td>C039</td>
-      <td>TRILLER GROUP INC.</td>
-      <td>-4.369921</td>
-      <td>distress</td>
-      <td>0.20</td>
-      <td>0.588207</td>
-      <td>0.471745</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>C011</td>
-      <td>GOLDMAN SACHS GROUP INC</td>
-      <td>-678.068327</td>
-      <td>distress</td>
-      <td>0.20</td>
-      <td>0.557811</td>
-      <td>0.450467</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>C010</td>
-      <td>OPPENHEIMER HOLDINGS INC</td>
-      <td>-2579.017325</td>
-      <td>distress</td>
-      <td>0.01</td>
-      <td>0.637765</td>
-      <td>0.449435</td>
-    </tr>
-    <tr>
-      <th>48</th>
-      <td>C048</td>
-      <td>FEDERAL HOME LOAN BANK OF SAN FRANCISCO</td>
-      <td>-0.017571</td>
-      <td>distress</td>
-      <td>0.20</td>
-      <td>0.526945</td>
-      <td>0.428861</td>
-    </tr>
-    <tr>
-      <th>49</th>
-      <td>C049</td>
-      <td>FEDERAL HOME LOAN BANK OF TOPEKA</td>
-      <td>0.126492</td>
-      <td>distress</td>
-      <td>0.20</td>
-      <td>0.525647</td>
-      <td>0.427953</td>
-    </tr>
-    <tr>
-      <th>71</th>
-      <td>C071</td>
-      <td>FEDERAL HOME LOAN BANK OF NEW YORK</td>
-      <td>0.141466</td>
-      <td>distress</td>
-      <td>0.20</td>
-      <td>0.525486</td>
-      <td>0.427840</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>C009</td>
-      <td>FEDERAL AGRICULTURAL MORTGAGE CORP</td>
-      <td>0.246106</td>
-      <td>distress</td>
-      <td>0.20</td>
-      <td>0.524915</td>
-      <td>0.427440</td>
-    </tr>
-    <tr>
-      <th>80</th>
-      <td>C080</td>
-      <td>ROBINHOOD MARKETS, INC.</td>
-      <td>0.985795</td>
-      <td>distress</td>
-      <td>0.20</td>
-      <td>0.509104</td>
-      <td>0.416373</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>C015</td>
-      <td>MORGAN STANLEY</td>
-      <td>-20.435926</td>
-      <td>distress</td>
-      <td>0.05</td>
-      <td>0.538643</td>
-      <td>0.392050</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>C005</td>
-      <td>RAYMOND JAMES FINANCIAL INC</td>
-      <td>-2514.254284</td>
-      <td>distress</td>
-      <td>0.01</td>
-      <td>0.548658</td>
-      <td>0.387060</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+| Counterparty_ID | Counterparty_Name                                   | Altman_Z     | Z_Zone   | Mapped_PD | PD_Logistic | Final_PD |
+|------------------|-----------------------------------------------------|--------------|----------|-----------|-------------|----------|
+| C039             | TRILLER GROUP INC.                                  | -4.369921    | distress | 0.20      | 0.588207    | 0.471745 |
+| C011             | GOLDMAN SACHS GROUP INC                             | -678.068327  | distress | 0.20      | 0.557811    | 0.450467 |
+| C010             | OPPENHEIMER HOLDINGS INC                            | -2579.017325 | distress | 0.01      | 0.637765    | 0.449435 |
+| C048             | FEDERAL HOME LOAN BANK OF SAN FRANCISCO            | -0.017571    | distress | 0.20      | 0.526945    | 0.428861 |
+| C049             | FEDERAL HOME LOAN BANK OF TOPEKA                   | 0.126492     | distress | 0.20      | 0.525647    | 0.427953 |
+| C071             | FEDERAL HOME LOAN BANK OF NEW YORK                 | 0.141466     | distress | 0.20      | 0.525486    | 0.427840 |
+| C009             | FEDERAL AGRICULTURAL MORTGAGE CORP                 | 0.246106     | distress | 0.20      | 0.524915    | 0.427440 |
+| C080             | ROBINHOOD MARKETS, INC.                            | 0.985795     | distress | 0.20      | 0.509104    | 0.416373 |
+| C015             | MORGAN STANLEY                                      | -20.435926   | distress | 0.05      | 0.538643    | 0.392050 |
+| C005             | RAYMOND JAMES FINANCIAL INC                         | -2514.254284 | distress | 0.01      | 0.548658    | 0.387060 |
 
 
 
@@ -997,20 +746,7 @@ But here we substitute:
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -1186,6 +922,9 @@ This floored EL serves as the final risk measure that can be used for:
 ### Translating Risk Analytics into Business Insights
 
 To support decision-making across risk, finance, and compliance teams, it is essential to present credit model outputs through **intuitive and interactive visualizations**. Using the modeled outputs from our pipeline, we developed a Power BI-style dashboard summarizing institutional credit risk metrics across counterparties, ratings, and sectors.
+
+![dashboard](https://github.com/user-attachments/assets/aea468a1-a925-4119-b3e2-409210b6fdf9)
+
 
 This step reflects real-world credit risk governance practices, where model outputs are regularly presented to credit committees, senior management, and regulators in dashboard form. The dashboard leverages the final output, capturing fields such as internal ratings, sector classification, and floored expected losses.
 
